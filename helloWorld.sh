@@ -1,4 +1,4 @@
 #!/bin/sh
 
 echo "Hello World"
-echo "Hello"
+echo "Hello Secret:" $MY_DSM_SECRET
