@@ -1,0 +1,47 @@
+name: test
+on: push
+jobs:
+  test:
+    name: Integrate Fortanix SDKMS-CLI test
+    runs-on: ubuntu-latest
+    steps:
+     - name: Checkout code
+       uses: actions/checkout@main
+     - name: 🚀 Deploy Application
+       run: echo "Deploying the app"
+     - name: Check Python Version
+       run: python --version
+     - name: Check pip Version
+       run: |
+          if command -v pip &> /dev/null; then
+            echo "✅ pip is installed"
+            pip --version
+          else
+            echo "❌ pip is NOT installed"
+            exit 1
+          fi
+     - name: Install sdkms-cli
+       run: |
+          pip install sdkms-cli
+     - name: check sdkms-cli
+       run: |
+          pip list | grep sdkms
+     - name: Run sdkms-cli
+       run: |
+          sdkms-cli --help
+     - name: export FORTANIX_API_ENDPOINT
+       run: |
+          echo "FORTANIX_API_ENDPOINT=https://apac.smartkey.io" >> $GITHUB_ENV
+     - name: export FORTANIX_API_KEY
+       env:
+          API_KEY: ${{ secrets.FORTANIX_API_KEY_SDKMS_CLI }}
+       run: |
+          echo "FORTANIX_API_KEY=$API_KEY" >> $GITHUB_ENV
+     - name: Login to Fortanix
+       run: |
+          sdkms-cli app-login
+     - name: check Sobject
+       env:
+          KID: ${{ secrets.SOBJECT_KID }}
+       run: |
+          sdkms-cli show-sobject --kid $KID
